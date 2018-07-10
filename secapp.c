@@ -48,12 +48,50 @@ void service_test(UINT num, char **arg)
 // Test function definition list
 void test(UINT num, char **arg)
 {
+	char tmp[MAX_PATH];
+	char exe_dir[MAX_PATH];
+
+	GetExeDir(exe_dir, sizeof(exe_dir));
+
+	CombinePath(tmp, sizeof(tmp), exe_dir, "test.txt");
+
+	Print("File: %s\n", tmp);
+
 	if (true)
 	{
-		Print("Test! %u\n", IsX64());
+		UINT i;
+		UCHAR c = 'a';
+		for (i = 0;;i++)
+		{
+			IO *io;
+			UINT64 size;
 
-		Temp_TestFunction("Nekosan");
-		return;
+			io = FileOpen(tmp, true);
+			if (io == NULL)
+			{
+				io = FileCreate(tmp);
+				if (io == NULL)
+				{
+					Print("FileCreate error.\n");
+					return;
+				}
+			}
+
+			size = FileSize64(io);
+
+			FileSeek(io, FILE_END, 0);
+
+			FileWrite(io, &c, 1);
+
+			FileFlush(io);
+
+			FileClose(io);
+
+			if ((i % 100) == 0)
+			{
+				Print("%u\n", i);
+			}
+		}
 	}
 }
 
